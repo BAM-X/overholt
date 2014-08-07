@@ -13,9 +13,7 @@ At the bare minimum you'll need the following for your development environment:
 It is strongly recommended to also install and use the following tools:
 
 1. [virtualenv](https://python-guide.readthedocs.org/en/latest/dev/virtualenvs/#virtualenv)
-2. [virtualenvwrapper](https://python-guide.readthedocs.org/en/latest/dev/virtualenvs/#virtualenvwrapper)
 3. [Vagrant](http://vagrantup.com)
-3. [Berkshelf](http://berkshelf.com)
 
 ### Local Setup
 
@@ -28,16 +26,18 @@ The following assumes you have all of the recommended tools listed above install
 
 #### 2. Create and initialize virtualenv for the project:
 
-    $ mkvirtualenv overholt
+    $ virtualenv venv
+    $ source venv/bin/activate
     $ pip install -r requirements.txt
 
 #### 3. Install the required cookbooks:
 
     $ berks install
 
-#### 4. Install the Berkshelf plugin for Vagrant:
+#### 4. Install the required plugins for Vagrant:
 
-    $ vagrant plugin install vagrant-berkshelf
+    $ vagrant plugin install vagrant-hostmanager
+    $ vagrant plugin install vagrant-omnibus
 
 #### 5. Start virtual machine:
 
