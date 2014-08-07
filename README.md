@@ -30,32 +30,28 @@ The following assumes you have all of the recommended tools listed above install
     $ source venv/bin/activate
     $ pip install -r requirements.txt
 
-#### 3. Install the required cookbooks:
-
-    $ berks install
-
-#### 4. Install the required plugins for Vagrant:
+#### 3. Install the required plugins for Vagrant:
 
     $ vagrant plugin install vagrant-hostmanager
     $ vagrant plugin install vagrant-omnibus
 
-#### 5. Start virtual machine:
+#### 4. Start virtual machine:
 
     $ vagrant up
 
-#### 6. Upgrade the database:
+#### 5. Upgrade the database:
 
     $ alembic upgrade head
 
-#### 7. Run the development server:
+#### 6. Run the development server:
 
     $ python wsgi.py
 
-#### 8. In another console run the Celery app:
+#### 7. In another console run the Celery app:
 
     $ celery -A overholt.tasks worker
 
-#### 9. Open [http://localhost:5000](http://localhost:5000)
+#### 8. Open [http://localhost:5000](http://localhost:5000)
 
 
 ### Development
