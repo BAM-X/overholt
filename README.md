@@ -21,7 +21,7 @@ The following assumes you have all of the recommended tools listed above install
 
 #### 1. Clone the project:
 
-    $ git clone git@github.com:mattupstate/overholt.git
+    $ git clone git@github.com:luchasei/overholt.git
     $ cd overholt
 
 #### 2. Create and initialize virtualenv for the project:
