@@ -1,51 +1,93 @@
+# Cookbook Name:: redisio
+# Attribute::default
 #
-# Locations
+# Copyright 2013, Brian Bianco <brian.bianco@gmail.com>
 #
-
-default[:redis][:conf_dir]          = "/etc/redis"
-default[:redis][:log_dir]           = "/var/log/redis"
-default[:redis][:data_dir]          = "/var/lib/redis"
-
-default[:redis][:home_dir]          = "/usr/local/share/redis"
-default[:redis][:pid_file]          = "/var/run/redis.pid"
-
-default[:redis][:db_basename]       = "dump.rdb"
-
-default[:redis ][:user]              = 'redis'
-default[:users ]['redis'][:uid]      = 335
-default[:groups]['redis'][:gid]      = 335
-
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# Server
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 #
 
-default[:redis][:server][:addr]     = "0.0.0.0"
-default[:redis][:server][:port]     = "6379"
-
-#
-# Install
-#
-
-default[:redis][:version]           = "2.0.2"
-default[:redis][:release_url]       = "http://redis.googlecode.com/files/redis-:version:.tar.gz"
-
-#
-# Tunables
-#
-
-default[:redis][:server][:timeout]  = "300"
-default[:redis][:glueoutputbuf]     = "yes"
-
-default[:redis][:saves]             = [["900", "1"], ["300", "10"], ["60", "10000"]]
-
-default[:redis][:slave]             = "no"
-if (node[:redis][:slave] == "yes")
-  # TODO: replace with discovery
-  default[:redis][:master_server]   = "redis-master." + domain
-  default[:redis][:master_port]     = "6379"
+case node['platform']
+when 'ubuntu','debian'
+  shell = '/bin/false'
+  homedir = '/var/lib/redis'
+when 'centos','redhat','scientific','amazon','suse'
+  shell = '/bin/sh'
+  homedir = '/var/lib/redis' 
+when 'fedora'
+  shell = '/bin/sh'
+  homedir = '/home' #this is necessary because selinux by default prevents the homedir from being managed in /var/lib/ 
+else
+  shell = '/bin/sh'
+  homedir = '/redis'
 end
 
-default[:redis][:shareobjects]      = "no"
-if (node[:redis][:shareobjects] == "yes")
-  default[:redis][:shareobjectspoolsize] = 1024
-end
+#Install related attributes
+default['redisio']['safe_install'] = true
+
+#Tarball and download related defaults
+default['redisio']['mirror'] = "http://download.redis.io/releases/"
+default['redisio']['base_name'] = 'redis-'
+default['redisio']['artifact_type'] = 'tar.gz'
+default['redisio']['version'] = '2.8.13'
+default['redisio']['base_piddir'] = '/var/run/redis'
+
+#Custom installation directory
+default['redisio']['install_dir'] = nil
+
+#Default settings for all redis instances, these can be overridden on a per server basis in the 'servers' hash
+default['redisio']['default_settings'] = {
+  'user'                   => 'redis',
+  'group'                  => 'redis',
+  'homedir'                => homedir,
+  'shell'                  => shell,
+  'systemuser'             => true,
+  'ulimit'                 => 0,
+  'configdir'              => '/etc/redis',
+  'name'                   => nil,
+  'address'                => nil,
+  'databases'              => '16',
+  'backuptype'             => 'rdb',
+  'datadir'                => '/var/lib/redis',
+  'unixsocket'             => nil,
+  'unixsocketperm'         => nil,
+  'timeout'                => '0',
+  'loglevel'               => 'verbose',
+  'logfile'                => nil,
+  'syslogenabled'          => 'yes',
+  'syslogfacility'         => 'local0',
+  'shutdown_save'          => false,
+  'save'                   => nil, # Defaults to ['900 1','300 10','60 10000'] inside of template.  Needed due to lack of hash subtraction
+  'slaveof'                => nil,
+  'job_control'            => 'initd', 
+  'masterauth'             => nil,
+  'slaveservestaledata'    => 'yes',
+  'replpingslaveperiod'    => '10',
+  'repltimeout'            => '60',
+  'requirepass'            => nil,
+  'maxclients'             => 10000,
+  'maxmemory'              => nil,
+  'maxmemorypolicy'        => 'volatile-lru',
+  'maxmemorysamples'       => '3',
+  'appendfsync'            => 'everysec',
+  'noappendfsynconrewrite' => 'no',
+  'aofrewritepercentage'   => '100',
+  'aofrewriteminsize'      => '64mb',
+  'cluster-enabled'        => 'no',
+  'cluster-config-file'    => nil, # Defaults to redis instance name inside of template if cluster is enabled.
+  'cluster-node-timeout'   => 5,
+  'includes'               => nil
+}
+
+# The default for this is set inside of the "install" recipe. This is due to the way deep merge handles arrays
+default['redisio']['servers'] = nil
+
