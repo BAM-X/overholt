@@ -111,9 +111,9 @@ Vagrant.configure("2") do |config|
       :mysql => {
         :bind_address => '0.0.0.0',
         :allow_remote_root => true,
-        :server_root_password => 'vagrant',
-        :server_debian_password => 'vagrant',
-        :server_repl_password => 'vagrant'
+        :server_root_password => '',
+        :server_debian_password => '',
+        :server_repl_password => ''
       }
     }
 
@@ -122,7 +122,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision :shell do |sh|
     #sh.privileged = true
     sh.inline = <<-EOF
-      mysql -uroot -pvagrant -e 'create database if not exists overholt;'
+      mysql -e 'create database if not exists overholt;'
     EOF
   end
 end
